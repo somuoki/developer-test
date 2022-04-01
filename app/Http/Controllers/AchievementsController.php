@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -71,9 +72,29 @@ class AchievementsController extends Controller
 
     }
 
+    public function badgeUnlocking(User $user){ // count achievements and update badge if acquired
+        $achievements = $this->getAchievements($user);
+        $total_achievements = $achievements->lw_achieved + $achievements->cw_achieved;
+        if ($total_achievements >= 4 && $achievements->b_achieved == 0){
+            $this->updateBadge($user, 4);
+        }elseif ($total_achievements >= 8 && $achievements->b_achieved == 4){
+            $this->updateBadge($user, 8);
+        }elseif ($total_achievements >= 10 && $achievements->b_achieved == 8){
+            $this->updateBadge($user, 10);
+        }
+    }
+
     private function updateAchievements(User $user, $achievement, $type){
         $user->achievements()->update([$type => $achievement]);
         $achievementName = $this->sortAchievements($user);
         AchievementUnlocked::dispatch($achievementName, $user);
     }
+
+    private function updateBadge(User $user, $achievement){
+        $user->achievements()->update(['b_achieved' => $achievement]);
+        $achievementName = $this->sortAchievements($user);
+        BadgeUnlocked::dispatch($achievementName, $user);
+    }
+
+
 }
