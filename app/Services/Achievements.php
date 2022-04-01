@@ -23,7 +23,7 @@ class Achievements
             5 => '10 Lessons Watched',
             10 => '25 Lessons Watched',
             25 => '50 Lessons Watched',
-            50 => 'Achievements Complete',
+            50 => '',
             default => 'Current Achievement Does not exist'
         };
 
@@ -35,10 +35,10 @@ class Achievements
         $achievements['unlocked'] = match ($value){
             0 => ['No Comments Written'],
             1 => ['First Comment Written'],
-            3 => ['3 Comments Written', 'First Comments Written'],
-            5 => ['5 Comments Written', '3 Comments Written', 'First Comments Written'],
-            10 => ['10 Comments Written', '5 Comments Written', '3 Comments Written', 'First Comments Written'],
-            20 => ['20 Comments Written', '10 Comments Written', '5 Comments Written', '3 Comments Written', 'First Comments Written']
+            3 => ['3 Comments Written', 'First Comment Written'],
+            5 => ['5 Comments Written', '3 Comments Written', 'First Comment Written'],
+            10 => ['10 Comments Written', '5 Comments Written', '3 Comments Written', 'First Comment Written'],
+            20 => ['20 Comments Written', '10 Comments Written', '5 Comments Written', '3 Comments Written', 'First Comment Written']
         };
 
         $achievements['next'] = match ($value){
@@ -47,7 +47,7 @@ class Achievements
             3 => '5 Comments Written',
             5 => '10 Comments Written',
             10 => '20 Comments Written',
-            20 => 'Achievements Complete',
+            20 => '',
             default => 'Current Achievement Does not exist'
         };
         return $achievements;
@@ -74,7 +74,7 @@ class Achievements
             case 10:
                 $achievements['unlocked'] = 'Master: 10 Achievements';
                 $achievements['next'] = 'All Badges Achieved';
-                $achievements['remaining'] = 'Achievements Complete';
+                $achievements['remaining'] = '0';
                 break;
             default:
                 $achievements['unlocked'] = 'Current Badge Does Not Exist';
