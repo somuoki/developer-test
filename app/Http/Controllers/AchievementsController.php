@@ -6,6 +6,7 @@ use App\Events\AchievementUnlocked;
 use App\Events\BadgeUnlocked;
 use App\Models\Comment;
 use App\Models\User;
+use App\Services\Achievements;
 use Illuminate\Http\Request;
 
 class AchievementsController extends Controller
