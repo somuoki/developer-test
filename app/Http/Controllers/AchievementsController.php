@@ -20,7 +20,7 @@ class AchievementsController extends Controller
             'next_available_achievements' => array_merge([$achievements['lw_achieved']['next']],[$achievements['cw_achieved']['next']]),
             'current_badge' => $achievements['b_achieved']['unlocked'],
             'next_badge' => $achievements['b_achieved']['next'],
-            'remaing_to_unlock_next_badge' => $achievements['b_achieved']['remaining']
+            'remaining_to_unlock_next_badge' => $achievements['b_achieved']['remaining']
         ]);
     }
 
