@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Events\LessonWatched;
 use App\Events\CommentWritten;
+use App\Listeners\CheckAchievementBadge;
 use App\Listeners\HandleCommentWritten;
 use App\Listeners\HandleLessonWatched;
 use Illuminate\Support\Facades\Event;
@@ -22,6 +25,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         LessonWatched::class => [
             HandleLessonWatched::class,
+        ],
+        AchievementUnlocked::class => [
+            CheckAchievementBadge::class,
+        ],
+        BadgeUnlocked::class => [
+            //
         ],
     ];
 

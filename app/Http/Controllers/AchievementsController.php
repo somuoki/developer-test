@@ -13,12 +13,14 @@ class AchievementsController extends Controller
 {
     public function index(User $user)
     {
+        $achievements = $this->sortAchievements($user);
+
         return response()->json([
-            'unlocked_achievements' => [],
-            'next_available_achievements' => [],
-            'current_badge' => '',
-            'next_badge' => '',
-            'remaing_to_unlock_next_badge' => 0
+            'unlocked_achievements' => array_merge([$achievements['lw_achieved']['unlocked']],[$achievements['cw_achieved']['unlocked']]),
+            'next_available_achievements' => array_merge([$achievements['lw_achieved']['next']],[$achievements['cw_achieved']['next']]),
+            'current_badge' => $achievements['b_achieved']['unlocked'],
+            'next_badge' => $achievements['b_achieved']['next'],
+            'remaing_to_unlock_next_badge' => $achievements['b_achieved']['remaining']
         ]);
     }
 

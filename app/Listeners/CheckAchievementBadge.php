@@ -16,8 +16,7 @@ class CheckAchievementBadge
      */
     public function __construct()
     {
-        (new AchievementsController)->badgeUnlocking($event->user);
-
+        //
     }
 
     /**
