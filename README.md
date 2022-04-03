@@ -8,6 +8,7 @@ Clone or Download Repository
 git clone https://github.com/somuoki/developer-test.git
 cd developer-test
 composer install
+php artisan migrate
 ```
 
 ## Endpoint

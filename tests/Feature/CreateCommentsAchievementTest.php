@@ -19,7 +19,7 @@ class CreateCommentsAchievementTest extends TestCase
     {
         // create user and null achievements
         $user = User::factory()->create();
-        $user->achievements()->create();
+        $user->currentAchievements()->create();
 
         Comment::create([
             'body' =>'acd',

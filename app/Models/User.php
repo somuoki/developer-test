@@ -44,7 +44,7 @@ class User extends Authenticatable
     /**
      * The achievements that belong to the user.
      */
-    public function achievements(){
+    public function currentAchievements(){
         return $this->hasOne(UserAchievement::class);
     }
 

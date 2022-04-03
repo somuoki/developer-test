@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\AchievementUnlocked;
 use App\Events\BadgeUnlocked;
+use App\Models\Achievement;
 use App\Models\Comment;
 use App\Models\User;
 use App\Services\Achievements;
@@ -16,65 +17,52 @@ class AchievementsController extends Controller
         $achievements = $this->sortAchievements($user);
 
         return response()->json([
-            'unlocked_achievements' => array_merge(
-                $achievements['lw_achieved']['unlocked'],$achievements['cw_achieved']['unlocked']
-            ),
-            'next_available_achievements' => [
-                $achievements['lw_achieved']['next'].','.$achievements['cw_achieved']['next']
-            ],
-            'current_badge' => $achievements['b_achieved']['unlocked'],
-            'next_badge' => $achievements['b_achieved']['next'],
-            'remaining_to_unlock_next_badge' => $achievements['b_achieved']['remaining']
+            'unlocked_achievements' => $achievements['unlocked'],
+            'next_available_achievements' => $achievements['next'],
+            'current_badge' => $achievements['current_badge'],
+            'next_badge' => $achievements['next_badge'],
+            'remaining_to_unlock_next_badge' => $achievements['remainder']
         ]);
     }
 
     public function getAchievements(User $user){
-        return $user->achievements()->first();
+        return $user->currentAchievements()->first();
     }
 
     public function sortAchievements(User $user){
-        $achievements = $this->getAchievements($user);
+        $sorted_achievements = (new Achievements)->achievements($this->getAchievements($user));
 
         return [
-            'lw_achieved' => (new Achievements)->getLessonAchievements($achievements->lw_achieved),
-            'cw_achieved' => (new Achievements)->getCommentAchievements($achievements->cw_achieved),
-            'b_achieved'  => (new Achievements)->getBadgeAchievements($achievements)
+            'unlocked' => [$sorted_achievements['lessons']['unlocked'], $sorted_achievements['comments']['unlocked']],
+            'next' => $sorted_achievements['lessons']['next'].','.$sorted_achievements['comments']['next'],
+            'current_badge'  => $sorted_achievements['badge']['unlocked'],
+            'next_badge' => $sorted_achievements['badge']['next'],
+            'remainder' => $sorted_achievements['badge']['remaining'],
         ];
     }
 
     public function lessonAchievements(User $user){ // count lessons and update achievements if accomplished
         $watched = $user->watched()->count();
-        $achievements = $this->getAchievements($user);
+        $achievements = $this->getAchievements($user)->lw_achieved;
+        $prev_achievement = $achievements > 0 ? Achievement::find($achievements) : Achievement::where('type', 'lesson')->first();
+        $next_achievement = !is_null($prev_achievement->next) ? Achievement::find($prev_achievement->next) : null;
 
-        if ($watched >= 50 && $achievements->lw_achieved < 50){
-            $this->updateAchievements($user, 50,'lw_achieved');
-        }elseif ($watched >= 25 && $achievements->lw_achieved < 25){
-            $this->updateAchievements($user, 25,'lw_achieved');
-        }elseif ($watched >= 10 && $achievements->lw_achieved < 10){
-            $this->updateAchievements($user, 10,'lw_achieved');
-        }elseif ($watched >= 5 && $achievements->lw_achieved < 5){
-            $this->updateAchievements($user, 5,'lw_achieved');
-        }elseif ($watched >= 1 && $achievements->lw_achieved < 1){
-            $this->updateAchievements($user, 1,'lw_achieved');
+        if ($watched >= $next_achievement->required && !is_null($next_achievement->required)){
+            $this->updateAchievements($user, $next_achievement->id,'lw_achieved');
         }
 
     }
 
-    public function commentAchievements(Comment $comment, User $user=null){ // count comments and update achievements if accomplished
-        $user = $user ?? $comment->user()->first();
+    public function commentAchievements(Comment $comment){ // count comments and update achievements if accomplished
+        $user = $comment->user()->first();
         $no_comments = $user->comments()->count();
-        $achievements = $this->getAchievements($user);
+        $achievements = $this->getAchievements($user)->cw_achieved;
 
-        if ($no_comments >= 20 && $achievements->cw_achieved < 20){
-            $this->updateAchievements($user, 20,'cw_achieved');
-        }elseif ($no_comments >= 10 && $achievements->cw_achieved < 10){
-            $this->updateAchievements($user, 10,'cw_achieved');
-        }elseif ($no_comments >= 5 && $achievements->cw_achieved < 5){
-            $this->updateAchievements($user, 5,'cw_achieved');
-        }elseif ($no_comments >= 3 && $achievements->cw_achieved < 3){
-            $this->updateAchievements($user, 3,'cw_achieved');
-        }elseif ($no_comments >= 1 && $achievements->cw_achieved < 1){
-            $this->updateAchievements($user, 1,'cw_achieved');
+        $prev_achievement = $achievements > 0 ? Achievement::find($achievements) : Achievement::where('type', 'comments')->first();
+        $next_achievement = !is_null($prev_achievement->next) ? Achievement::find($prev_achievement->next) : null;
+
+        if ($no_comments >= $next_achievement->required && !is_null($next_achievement->required)){
+            $this->updateAchievements($user, $next_achievement->id,'cw_achieved');
         }
 
     }
@@ -82,23 +70,24 @@ class AchievementsController extends Controller
     public function badgeUnlocking(User $user){ // count achievements and update badge if acquired
         $achievements = $this->getAchievements($user);
         $total_achievements = $achievements->lw_achieved + $achievements->cw_achieved;
-        if ($total_achievements >= 4 && $achievements->b_achieved == 0){
-            $this->updateBadge($user, 4);
-        }elseif ($total_achievements >= 8 && $achievements->b_achieved == 4){
-            $this->updateBadge($user, 8);
-        }elseif ($total_achievements >= 10 && $achievements->b_achieved == 8){
-            $this->updateBadge($user, 10);
+
+        $prev_achievement = $achievements->b_achieved > 0 ? Achievement::find($achievements->b_achieved) : Achievement::where('type', 'badge')->first();
+        $next_achievement = !is_null($prev_achievement->next) ? Achievement::find($prev_achievement->next) : null;
+
+        if ($total_achievements >= $next_achievement->required && !is_null($next_achievement->required)){
+            $this->updateAchievements($user, $next_achievement->id,'cw_achieved');
         }
+
     }
 
     private function updateAchievements(User $user, $achievement, $type){
-        $user->achievements()->update([$type => $achievement]);
+        $user->currentAchievements()->update([$type => $achievement]);
         $achievementName = $this->sortAchievements($user);
         AchievementUnlocked::dispatch($achievementName, $user);
     }
 
     private function updateBadge(User $user, $achievement){
-        $user->achievements()->update(['b_achieved' => $achievement]);
+        $user->currentAchievements()->update(['b_achieved' => $achievement]);
         $achievementName = $this->sortAchievements($user);
         BadgeUnlocked::dispatch($achievementName, $user);
     }

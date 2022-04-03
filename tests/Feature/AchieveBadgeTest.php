@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\BadgeUnlocked;
 use App\Events\LessonWatched;
 use App\Models\Comment;
 use App\Models\Lesson;
@@ -16,12 +17,15 @@ class AchieveBadgeTest extends TestCase
      * A basic feature test example.
      *
      * @return void
+     * @throws \Exception
      */
     public function test_example()
     { // Tests Badge Unlocking
+
+        $this->expectsEvents(BadgeUnlocked::class);
         $user = User::factory()->create();
 
-        $user->achievements()->create();
+        $user->currentAchievements()->create();
 
         Comment::factory()->count(19)->make([
             'user_id' => $user['id']

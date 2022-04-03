@@ -21,7 +21,7 @@ class CreateLessonAchievementTest extends TestCase
         // create user, lessons and null achievements
         $user = User::factory()->create();
         $lesson = Lesson::factory()->create();
-        $user->achievements()->create();
+        $user->currentAchievements()->create();
 
         LessonWatched::dispatch($lesson, $user); // dispatch new lesson event
 
