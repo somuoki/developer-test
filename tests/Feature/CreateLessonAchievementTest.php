@@ -7,26 +7,31 @@ use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Assert;
 use Tests\TestCase;
 
 class CreateLessonAchievementTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * Check if lessons watched is inserted in db
      *
      * @return void
      */
-    public function test_example()
+    public function test_lesson()
     {
         // create user, lessons and null achievements
         $user = User::factory()->create();
         $lesson = Lesson::factory()->create();
-        $user->currentAchievements()->create();
 
         LessonWatched::dispatch($lesson, $user); // dispatch new lesson event
 
-        $response = $this->get("/users/{$user->id}/achievements");
+        $this->assertDatabaseHas('lesson_user', [
+            'user_id' => $user['id'],
+            'lesson_id' => $lesson['id'],
+            'watched' => 1
+        ]);
 
-        $response->assertSee('First Lesson Watched');
+//        $data = $this->get("/users/{$user->id}/achievements")->getData();
+//        Assert::assertTrue(in_array('First Lesson Watched', $data->unlocked_achievements ));
     }
 }

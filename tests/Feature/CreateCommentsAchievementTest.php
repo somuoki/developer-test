@@ -6,28 +6,33 @@ use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Assert;
+use PHPUnit\TextUI\XmlConfiguration\PHPUnit;
 use Tests\TestCase;
 
 class CreateCommentsAchievementTest extends TestCase
 {
     /**
-     * A basic feature test example.
+     * Test to assert if comment is stored in db
      *
      * @return void
      */
-    public function test_example()
+    public function test_comment()
     {
         // create user and null achievements
         $user = User::factory()->create();
-        $user->currentAchievements()->create();
 
-        Comment::create([
+        $comment = Comment::create([
             'body' =>'acd',
             'user_id' => $user['id']
         ]);
 
-        $response = $this->get("/users/{$user->id}/achievements");
-
-        $response->assertSee('First Comment Written');
+        $this->assertDatabaseHas('comments', [
+            'body' => 'acd',
+            'user_id' => $user['id']
+        ]);
+//        $data = $this->get("/users/{$user->id}/achievements")->getData();
+//
+//        Assert::assertTrue(in_array('First Comment Written', $data->unlocked_achievements ));
     }
 }

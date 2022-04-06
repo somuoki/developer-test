@@ -24,111 +24,97 @@ class CreateAchievementsTable extends Migration
         DB::table('achievements')->insert([
             [
                 'id' => 1,
-                'achievement' => 'No Lessons Watched',
-                'type' => 'lesson',
-                'next' => 2,
-                'required' => 0
-            ],
-            [
-                'id' => 2,
                 'achievement' => 'First Lesson Watched',
                 'type' => 'lesson',
-                'next' => 3,
+                'next' => 2,
                 'required' => 1
             ],
             [
-                'id' => 3,
+                'id' => 2,
                 'achievement' => '5 Lessons Watched',
                 'type' => 'lesson',
-                'next' => 4,
+                'next' => 3,
                 'required' => 5
             ],
             [
-                'id' => 4,
+                'id' => 3,
                 'achievement' => '10 Lessons Watched',
                 'type' => 'lesson',
-                'next' => 5,
+                'next' => 4,
                 'required' => 10
             ],
             [
-                'id' => 5,
+                'id' => 4,
                 'achievement' => '25 Lessons Watched',
                 'type' => 'lesson',
-                'next' => 6,
+                'next' => 5,
                 'required' => 25
             ],
             [
-                'id' => 6,
+                'id' => 5,
                 'achievement' => '50 Lessons Watched',
                 'type' => 'lesson',
                 'next' => null,
                 'required' => 50
             ],
             [
-                'id' => 7,
-                'achievement' => 'No Comments Written',
-                'type' => 'comments',
-                'next' => 8,
-                'required' => 0
-            ],
-            [
-                'id' => 8,
+                'id' => 6,
                 'achievement' => 'First Comment Written',
                 'type' => 'comments',
-                'next' => 9,
+                'next' => 7,
                 'required' => 1
             ],
             [
-                'id' => 9,
+                'id' => 7,
                 'achievement' => '3 Comments Written',
                 'type' => 'comments',
-                'next' => 10,
+                'next' => 8,
                 'required' => 3
             ],
             [
-                'id' => 10,
+                'id' => 8,
                 'achievement' => '5 Comments Written',
                 'type' => 'comments',
-                'next' => 11,
+                'next' => 9,
                 'required' => 5
             ],
             [
-                'id' => 11,
+                'id' => 9,
                 'achievement' => '10 Comments Written',
                 'type' => 'comments',
-                'next' => 12,
+                'next' => 10,
                 'required' => 10
             ],
             [
-                'id' => 12,
+                'id' => 10,
                 'achievement' => '20 Comments Written',
                 'type' => 'comments',
                 'next' => null,
                 'required' => 20
             ],
             [
-                'id' => 13,
+                'id' => 11,
                 'achievement' => 'Beginner: 0 Achievements',
                 'type' => 'badge',
-                'next' => 14,
+                'next' => 12,
                 'required' => 0
             ],
             [
-                'id' => 14,
+                'id' => 12,
                 'achievement' => 'Intermediate: 4 Achievements',
                 'type' => 'badge',
-                'next' => 15,
+                'next' => 13,
                 'required' => 4
             ],
             [
-                'id' => 15,
+                'id' => 13,
                 'achievement' => 'Advanced: 8 Achievements',
                 'type' => 'badge',
-                'next' => 16,
+                'next' => 14,
                 'required' => 8
             ],
             [
-                'id' => 16,
+                'id' => 14,
                 'achievement' => 'Master: 10 Achievements',
                 'type' => 'badge',
                 'next' => null,

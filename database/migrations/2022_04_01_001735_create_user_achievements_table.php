@@ -18,7 +18,7 @@ class CreateUserAchievementsTable extends Migration
             $table->foreignId('user_id');
             $table->integer('lw_achieved')->default(0);
             $table->integer('cw_achieved')->default(0);
-            $table->integer('b_achieved')->default(0);
+            $table->integer('b_achieved')->default(11);
             $table->timestamps();
         });
     }
